@@ -1,0 +1,47 @@
+name: Build/release
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "**.md"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: "Install Dependencies"
+        run: yarn install --prefer-offline --frozen-lockfile
+
+      - name: "Install Dependencies"
+        run: yarn install --prefer-offline --frozen-lockfile
+
+      - name: "Build App"
+        run: yarn build
+
+      - name: Compute the release tag
+        run: |
+          echo "release_tag=v`date '+%Y-%m-%d'`" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/**/*.AppImage
+          tag_name: ${{ env.release_tag }}
+          target_commitish: master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
