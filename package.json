@@ -1,0 +1,28 @@
+{
+  "name": "youtube",
+  "version": "1.0.0",
+  "description": "...",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "electron": "^24.1.2",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "appId": "com.danielgriffiths.youtube",
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://dummy-url.com"
+      }
+    ]
+  }
+}

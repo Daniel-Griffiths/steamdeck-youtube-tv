@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Youtube</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+  </head>
+  <body>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
+    <webview
+      id="webview"
+      tabindex="0"
+      src="https://www.youtube.com/tv"
+      httpreferrer="https://www.youtube.com/tv"
+      style="height: 100vh; width: 100vw; background: #000"
+      useragent="Mozilla/5.0 (SmartHub; SMART-TV; U; Linux/SmartTV) AppleWebKit/531.2+ (KHTML, Like Gecko) WebBrowser/1.0 SmartTV Safari/531.2+"
+    ></webview>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("webview").focus();
+      });
+    </script>
+  </body>
+</html>
