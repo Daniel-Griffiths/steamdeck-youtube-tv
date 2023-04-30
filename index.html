@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Youtube</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+  </head>
+  <body>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
+    <webview
+      id="webview"
+      tabindex="0"
+      src="https://www.youtube.com/tv"
+      httpreferrer="https://www.youtube.com/tv"
+      style="height: 100vh; width: 100vw; background: #000"
+      useragent="Mozilla/5.0 (SmartHub; SMART-TV; U; Linux/SmartTV) AppleWebKit/531.2+ (KHTML, Like Gecko) WebBrowser/1.0 SmartTV Safari/531.2+"
+    ></webview>
+    <script>
+      const { GamepadListener } = require("gamepad.js");
+
+      const webview = document.getElementById("webview");
+
+      document.addEventListener("DOMContentLoaded", function () {
+        webview.focus();
+      });
+
+      function pressKey(keyCode) {
+        webview.sendInputEvent({
+          type: "keyDown",
+          keyCode,
+        });
+        webview.sendInputEvent({
+          type: "char",
+          keyCode,
+        });
+        webview.sendInputEvent({
+          type: "keyUp",
+          keyCode,
+        });
+      }
+
+      const listener = new GamepadListener();
+
+      listener.on("gamepad:button", (event) => {
+        const { button, pressed } = event.detail;
+
+        if (!pressed) return;
+
+        switch (button) {
+          case 12:
+            pressKey("up");
+            break;
+          case 13:
+            pressKey("down");
+            break;
+          case 14:
+            pressKey("left");
+            break;
+          case 15:
+            pressKey("right");
+            break;
+          case 0:
+            pressKey(String.fromCharCode(0x0d));
+            break;
+          case 1:
+            pressKey("esc");
+            break;
+        }
+      });
+
+      listener.start();
+    </script>
+  </body>
+</html>
