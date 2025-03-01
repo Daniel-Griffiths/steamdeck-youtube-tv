@@ -1,6 +1,6 @@
 {
   "name": "youtube",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "...",
   "main": "main.js",
   "scripts": {
@@ -10,8 +10,8 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^30.0.3",
-    "electron-builder": "^24.13.3"
+    "electron": "^34.3.0",
+    "electron-builder": "^25.1.8"
   },
   "build": {
     "appId": "com.danielgriffiths.youtube",
