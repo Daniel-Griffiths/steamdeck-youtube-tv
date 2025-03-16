@@ -2,6 +2,8 @@
   "name": "youtube",
   "version": "1.0.3",
   "description": "...",
+  "author": "Daniel Griffiths",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -16,7 +18,33 @@
   "build": {
     "appId": "com.danielgriffiths.youtube",
     "mac": {
-      "category": "your.app.category.type"
+      "category": "public.app-category.video"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "AudioVideo"
+    },
+    "flatpak": {
+      "runtime": "org.freedesktop.Platform",
+      "runtimeVersion": "23.08",
+      "sdk": "org.freedesktop.Sdk",
+      "finishArgs": [
+        "--share=network",
+        "--socket=x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--socket=pipewire",
+        "--device=dri",
+        "--filesystem=home",
+        "--filesystem=xdg-download",
+        "--filesystem=/run/media",
+        "--talk-name=org.freedesktop.ScreenSaver",
+        "--talk-name=org.kde.StatusNotifierWatcher",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.freedesktop.portal.*"
+      ]
     },
     "publish": [
       {

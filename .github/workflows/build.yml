@@ -28,7 +28,10 @@ jobs:
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: "Build App"
-        run: yarn build
+        run: export DEBUG=electron-builder,electron-builder:*,flatpak-builder:* && yarn build
+
+      - name: List generated files
+        run: ls -R dist/
 
       - name: "Get Package Version"
         id: package-version
