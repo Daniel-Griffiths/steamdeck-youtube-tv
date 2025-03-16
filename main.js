@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, session, screen } = require("electron");
+const { ElectronBlocker } = require("@cliqz/adblocker-electron");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -6,18 +7,25 @@ let win;
 
 function createWindow() {
   // Create the browser window.
+  const { width = 1280, height = 720 } =
+    screen.getPrimaryDisplay().workAreaSize;
+
   win = new BrowserWindow({
-    width: 1280,
-    height: 720,
+    width,
+    height,
     icon: "icon.png",
     autoHideMenuBar: true,
+    backgroundColor: "#282828",
     webPreferences: {
-      sandbox: false,
       webviewTag: true,
       webSecurity: false,
       nodeIntegration: true,
       contextIsolation: false,
     },
+  });
+
+  ElectronBlocker.fromPrebuiltAdsAndTracking(fetch).then((blocker) => {
+    blocker.enableBlockingInSession(session.defaultSession);
   });
 
   // and load the index.html of the app.
