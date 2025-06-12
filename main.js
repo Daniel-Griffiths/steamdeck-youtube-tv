@@ -1,5 +1,5 @@
 const { app, BrowserWindow, session, screen } = require("electron");
-const { ElectronBlocker } = require("@cliqz/adblocker-electron");
+const { ElectronBlocker } = require("@ghostery/adblocker-electron");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
