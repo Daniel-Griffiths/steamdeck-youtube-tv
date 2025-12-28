@@ -1,6 +1,6 @@
 {
   "name": "youtube",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "...",
   "author": "Daniel Griffiths",
   "license": "MIT",
@@ -55,7 +55,6 @@
   },
   "dependencies": {
     "@ghostery/adblocker-electron": "^2.13.2",
-    "electron-updater": "^6.6.2",
-    "gamepad.js": "^2.1.0"
+    "electron-updater": "^6.6.2"
   }
 }

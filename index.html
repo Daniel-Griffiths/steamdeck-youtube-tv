@@ -26,13 +26,13 @@
       useragent="Mozilla/5.0 (Linux; Android 12) Cobalt/22.2.3-gold (PS4)"
     ></webview>
     <script>
-      const { GamepadListener } = require("gamepad.js");
-
       const webview = document.getElementById("webview");
 
       document.addEventListener("DOMContentLoaded", function () {
         webview.focus();
       });
+
+      const VALVE_VENDOR_ID = "28de";
 
       const GAMEPAD_BUTTON = {
         CROSS: 0,
@@ -65,13 +65,14 @@
       ]);
 
       const heldButtons = new Map();
+      const buttonStates = new Map();
 
       function sendKey(keyCode, type) {
         webview.sendInputEvent({ type, keyCode });
       }
 
-      function startKeyRepeat(button, keyCode) {
-        stopKeyRepeat(button);
+      function startKeyRepeat(buttonKey, keyCode) {
+        stopKeyRepeat(buttonKey);
         sendKey(keyCode, "keyDown");
 
         const delayTimer = setTimeout(() => {
@@ -80,50 +81,65 @@
             sendKey(keyCode, "keyDown");
           }, REPEAT_INTERVAL);
 
-          heldButtons.set(button, { repeatTimer, keyCode });
+          heldButtons.set(buttonKey, { repeatTimer, keyCode });
         }, REPEAT_DELAY);
 
-        heldButtons.set(button, { delayTimer, keyCode });
+        heldButtons.set(buttonKey, { delayTimer, keyCode });
       }
 
-      function stopKeyRepeat(button) {
-        const held = heldButtons.get(button);
+      function stopKeyRepeat(buttonKey) {
+        const held = heldButtons.get(buttonKey);
         if (held) {
           clearTimeout(held.delayTimer);
           clearInterval(held.repeatTimer);
           sendKey(held.keyCode, "keyUp");
-          heldButtons.delete(button);
+          heldButtons.delete(buttonKey);
         }
       }
-
-      const VALVE_VENDOR_ID = "28de";
 
       function isSteamDeckController(gamepad) {
         return gamepad.id.toLowerCase().includes(VALVE_VENDOR_ID);
       }
 
-      const listener = new GamepadListener();
+      function handleButtonChange(gamepadIndex, buttonIndex, pressed) {
+        const buttonKey = `${gamepadIndex}-${buttonIndex}`;
+        const keyCode = buttonMap[buttonIndex];
 
-      listener.on("gamepad:button", (event) => {
-        const { gamepad, button, pressed } = event.detail;
-
-        if (!isSteamDeckController(gamepad)) return;
-
-        const keyCode = buttonMap[button];
         if (!keyCode) return;
 
-        if (repeatableButtons.has(button)) {
+        if (repeatableButtons.has(buttonIndex)) {
           if (pressed) {
-            startKeyRepeat(button, keyCode);
+            startKeyRepeat(buttonKey, keyCode);
           } else {
-            stopKeyRepeat(button);
+            stopKeyRepeat(buttonKey);
           }
         } else {
           sendKey(keyCode, pressed ? "keyDown" : "keyUp");
         }
-      });
+      }
 
-      listener.start();
+      function pollGamepads() {
+        const gamepads = navigator.getGamepads();
+
+        for (const gamepad of gamepads) {
+          if (!gamepad || !isSteamDeckController(gamepad)) continue;
+
+          gamepad.buttons.forEach((button, buttonIndex) => {
+            const buttonKey = `${gamepad.index}-${buttonIndex}`;
+            const wasPressed = buttonStates.get(buttonKey) || false;
+            const isPressed = button.pressed;
+
+            if (isPressed !== wasPressed) {
+              buttonStates.set(buttonKey, isPressed);
+              handleButtonChange(gamepad.index, buttonIndex, isPressed);
+            }
+          });
+        }
+
+        requestAnimationFrame(pollGamepads);
+      }
+
+      pollGamepads();
     </script>
   </body>
 </html>
