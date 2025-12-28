@@ -6,6 +6,7 @@ const { autoUpdater } = require("electron-updater");
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let blocker = null;
+let updateDownloaded = false;
 
 // Load blocker before creating window
 async function initBlocker() {
@@ -67,6 +68,16 @@ app.on("ready", async () => {
 
   // Check for updates
   autoUpdater.checkForUpdates();
+});
+
+autoUpdater.on("update-downloaded", () => {
+  updateDownloaded = true;
+});
+
+app.on("before-quit", () => {
+  if (updateDownloaded) {
+    autoUpdater.quitAndInstall(true, true);
+  }
 });
 
 // Quit when all windows are closed.
