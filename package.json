@@ -7,7 +7,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
+    "build": "electron-builder --publish never",
     "pack": "electron-builder --dir",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -46,15 +46,15 @@
         "--talk-name=org.freedesktop.portal.*"
       ]
     },
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "https://dummy-url.com"
-      }
-    ]
+    "publish": {
+      "provider": "github",
+      "owner": "Daniel-Griffiths",
+      "repo": "steamdeck-youtube-tv"
+    }
   },
   "dependencies": {
     "@ghostery/adblocker-electron": "^2.13.2",
+    "electron-updater": "^6.6.2",
     "gamepad.js": "^2.1.0"
   }
 }

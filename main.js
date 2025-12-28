@@ -1,5 +1,6 @@
 const { app, BrowserWindow, session, screen, webContents } = require("electron");
 const { ElectronBlocker } = require("@ghostery/adblocker-electron");
+const { autoUpdater } = require("electron-updater");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -63,6 +64,15 @@ function createWindow() {
 app.on("ready", async () => {
   await initBlocker();
   createWindow();
+
+  // Check for updates
+  autoUpdater.checkForUpdates();
+});
+
+// Auto-install update when downloaded
+autoUpdater.on("update-downloaded", () => {
+  console.log("[AutoUpdater] Update downloaded, installing...");
+  autoUpdater.quitAndInstall();
 });
 
 // Quit when all windows are closed.

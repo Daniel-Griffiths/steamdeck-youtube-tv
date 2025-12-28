@@ -45,5 +45,7 @@ jobs:
           files: |
             dist/**/*.AppImage
             dist/**/*.exe
+            dist/**/latest-linux.yml
+            dist/**/latest.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
