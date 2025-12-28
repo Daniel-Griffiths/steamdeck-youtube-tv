@@ -69,12 +69,6 @@ app.on("ready", async () => {
   autoUpdater.checkForUpdates();
 });
 
-// Auto-install update when downloaded
-autoUpdater.on("update-downloaded", () => {
-  console.log("[AutoUpdater] Update downloaded, installing...");
-  autoUpdater.quitAndInstall();
-});
-
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar

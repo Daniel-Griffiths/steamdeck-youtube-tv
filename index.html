@@ -96,17 +96,18 @@
         }
       }
 
+      const VALVE_VENDOR_ID = "28de";
+
+      function isSteamDeckController(gamepad) {
+        return gamepad.id.toLowerCase().includes(VALVE_VENDOR_ID);
+      }
+
       const listener = new GamepadListener();
-      let activeGamepad = null;
 
       listener.on("gamepad:button", (event) => {
         const { gamepad, button, pressed } = event.detail;
 
-        if (activeGamepad === null && pressed) {
-          activeGamepad = gamepad.index;
-        }
-
-        if (gamepad.index !== activeGamepad) return;
+        if (!isSteamDeckController(gamepad)) return;
 
         const keyCode = buttonMap[button];
         if (!keyCode) return;
@@ -119,13 +120,6 @@
           }
         } else {
           sendKey(keyCode, pressed ? "keyDown" : "keyUp");
-        }
-      });
-
-      listener.on("gamepad:disconnected", (event) => {
-        if (event.detail.index === activeGamepad) {
-          activeGamepad = null;
-          heldButtons.forEach((_, button) => stopKeyRepeat(button));
         }
       });
 
