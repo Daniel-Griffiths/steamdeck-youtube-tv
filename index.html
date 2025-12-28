@@ -34,7 +34,7 @@
         webview.focus();
       });
 
-      // Button to key mapping (using original working key codes)
+      // Button to key mapping
       // Standard gamepad: 0=Cross/A, 1=Circle/B, 2=Square/X, 3=Triangle/Y
       // 12=Up, 13=Down, 14=Left, 15=Right
       const buttonMap = {
@@ -46,18 +46,77 @@
         15: "Right", // D-pad Right
       };
 
+      // Key repeat settings (in ms)
+      const REPEAT_DELAY = 400; // Initial delay before repeating
+      const REPEAT_INTERVAL = 100; // Interval between repeats
+
+      // Track held buttons and their repeat timers
+      const heldButtons = new Map();
+
+      function sendKey(keyCode, type) {
+        webview.sendInputEvent({ type, keyCode });
+      }
+
+      function startKeyRepeat(button, keyCode) {
+        stopKeyRepeat(button);
+        sendKey(keyCode, "keyDown");
+
+        const delayTimer = setTimeout(() => {
+          const repeatTimer = setInterval(() => {
+            sendKey(keyCode, "keyUp");
+            sendKey(keyCode, "keyDown");
+          }, REPEAT_INTERVAL);
+
+          heldButtons.set(button, { repeatTimer, keyCode });
+        }, REPEAT_DELAY);
+
+        heldButtons.set(button, { delayTimer, keyCode });
+      }
+
+      function stopKeyRepeat(button) {
+        const held = heldButtons.get(button);
+        if (held) {
+          clearTimeout(held.delayTimer);
+          clearInterval(held.repeatTimer);
+          sendKey(held.keyCode, "keyUp");
+          heldButtons.delete(button);
+        }
+      }
+
       const listener = new GamepadListener();
 
-      listener.on("gamepad:button", (event) => {
-        const { button, pressed } = event.detail;
-        const keyCode = buttonMap[button];
+      // Track the first gamepad that sends input (ignore others to prevent duplicates)
+      let activeGamepad = null;
 
+      listener.on("gamepad:button", (event) => {
+        const { gamepad, button, pressed } = event.detail;
+
+        if (activeGamepad === null && pressed) {
+          activeGamepad = gamepad.index;
+          console.log(
+            `[Gamepad] Using gamepad ${gamepad.index}: ${gamepad.id}`
+          );
+        }
+
+        if (gamepad.index !== activeGamepad) return;
+
+        const keyCode = buttonMap[button];
         if (!keyCode) return;
 
-        webview.sendInputEvent({
-          type: pressed ? "keyDown" : "keyUp",
-          keyCode,
-        });
+        if (pressed) {
+          startKeyRepeat(button, keyCode);
+        } else {
+          stopKeyRepeat(button);
+        }
+      });
+
+      listener.on("gamepad:disconnected", (event) => {
+        if (event.detail.index === activeGamepad) {
+          console.log(`[Gamepad] Gamepad ${activeGamepad} disconnected`);
+          activeGamepad = null;
+          // Clear all held buttons
+          heldButtons.forEach((_, button) => stopKeyRepeat(button));
+        }
       });
 
       listener.start();
