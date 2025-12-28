@@ -1,9 +1,25 @@
-const { app, BrowserWindow, session, screen } = require("electron");
+const { app, BrowserWindow, session, screen, webContents } = require("electron");
 const { ElectronBlocker } = require("@ghostery/adblocker-electron");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let blocker = null;
+
+// Load blocker before creating window
+async function initBlocker() {
+  blocker = await ElectronBlocker.fromPrebuiltAdsAndTracking(fetch);
+
+  // Enable on default session
+  blocker.enableBlockingInSession(session.defaultSession);
+
+  // Also enable on any new webContents (including webviews)
+  app.on("web-contents-created", (event, contents) => {
+    blocker.enableBlockingInSession(contents.session);
+  });
+
+  console.log("[AdBlocker] Initialized and ready");
+}
 
 function createWindow() {
   // Create the browser window.
@@ -22,10 +38,6 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
-  });
-
-  ElectronBlocker.fromPrebuiltAdsAndTracking(fetch).then((blocker) => {
-    blocker.enableBlockingInSession(session.defaultSession);
   });
 
   // and load the index.html of the app.
@@ -48,7 +60,10 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on("ready", async () => {
+  await initBlocker();
+  createWindow();
+});
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

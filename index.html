@@ -34,48 +34,30 @@
         webview.focus();
       });
 
-      function pressKey(keyCode) {
-        webview.sendInputEvent({
-          type: "keyDown",
-          keyCode,
-        });
-        webview.sendInputEvent({
-          type: "char",
-          keyCode,
-        });
-        webview.sendInputEvent({
-          type: "keyUp",
-          keyCode,
-        });
-      }
+      // Button to key mapping (using original working key codes)
+      // Standard gamepad: 0=Cross/A, 1=Circle/B, 2=Square/X, 3=Triangle/Y
+      // 12=Up, 13=Down, 14=Left, 15=Right
+      const buttonMap = {
+        0: String.fromCharCode(0x0d), // Cross/A - Enter (carriage return)
+        1: "Escape", // Circle/B - Back
+        12: "Up", // D-pad Up
+        13: "Down", // D-pad Down
+        14: "Left", // D-pad Left
+        15: "Right", // D-pad Right
+      };
 
       const listener = new GamepadListener();
 
       listener.on("gamepad:button", (event) => {
         const { button, pressed } = event.detail;
+        const keyCode = buttonMap[button];
 
-        if (!pressed) return;
+        if (!keyCode) return;
 
-        switch (button) {
-          case 12:
-            pressKey("up");
-            break;
-          case 13:
-            pressKey("down");
-            break;
-          case 14:
-            pressKey("left");
-            break;
-          case 15:
-            pressKey("right");
-            break;
-          case 0:
-            pressKey(String.fromCharCode(0x0d));
-            break;
-          case 1:
-            pressKey("esc");
-            break;
-        }
+        webview.sendInputEvent({
+          type: pressed ? "keyDown" : "keyUp",
+          keyCode,
+        });
       });
 
       listener.start();
