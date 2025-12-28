@@ -1,6 +1,6 @@
 {
   "name": "youtube",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "...",
   "author": "Daniel Griffiths",
   "license": "MIT",
@@ -24,7 +24,8 @@
       "target": [
         "AppImage"
       ],
-      "category": "AudioVideo"
+      "category": "AudioVideo",
+      "artifactName": "youtube.${ext}"
     },
     "flatpak": {
       "runtime": "org.freedesktop.Platform",
