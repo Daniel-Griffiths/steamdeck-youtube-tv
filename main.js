@@ -1,10 +1,4 @@
-const {
-  app,
-  BrowserWindow,
-  session,
-  screen,
-  webContents,
-} = require("electron");
+const { app, BrowserWindow, session, screen } = require("electron");
 const { ElectronBlocker } = require("@ghostery/adblocker-electron");
 const { autoUpdater } = require("electron-updater");
 

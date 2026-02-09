@@ -1,6 +1,6 @@
 {
   "name": "youtube",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "...",
   "author": "Daniel Griffiths",
   "license": "MIT",
@@ -9,11 +9,12 @@
     "start": "electron .",
     "build": "electron-builder --publish never",
     "pack": "electron-builder --dir",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "patch-package && electron-builder install-app-deps"
   },
   "devDependencies": {
     "electron": "^40.2.1",
-    "electron-builder": "^26.7.0"
+    "electron-builder": "^26.7.0",
+    "patch-package": "^8.0.1"
   },
   "build": {
     "appId": "com.danielgriffiths.youtube",

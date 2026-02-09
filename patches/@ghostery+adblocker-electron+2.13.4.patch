@@ -1,0 +1,30 @@
+diff --git a/node_modules/@ghostery/adblocker-electron/dist/commonjs/index.js b/node_modules/@ghostery/adblocker-electron/dist/commonjs/index.js
+index 78bdebe..ac83433 100644
+--- a/node_modules/@ghostery/adblocker-electron/dist/commonjs/index.js
++++ b/node_modules/@ghostery/adblocker-electron/dist/commonjs/index.js
+@@ -173,7 +173,9 @@ class ElectronBlocker extends adblocker_1.FiltersEngine {
+             }
+             for (const script of scripts) {
+                 try {
+-                    event.sender.executeJavaScript(script, true);
++                    // Wrap in IIFE to avoid global scope pollution (fixes JSONPath conflict)
++                    const wrappedScript = `(function() { ${script} })();`;
++                    event.sender.executeJavaScript(wrappedScript, true);
+                 }
+                 catch (e) {
+                     console.error('@ghostery/adblocker scriptlet crashed', e);
+diff --git a/node_modules/@ghostery/adblocker-electron/dist/esm/index.js b/node_modules/@ghostery/adblocker-electron/dist/esm/index.js
+index 1122fac..7a5616b 100644
+--- a/node_modules/@ghostery/adblocker-electron/dist/esm/index.js
++++ b/node_modules/@ghostery/adblocker-electron/dist/esm/index.js
+@@ -132,7 +132,9 @@ export class ElectronBlocker extends FiltersEngine {
+             }
+             for (const script of scripts) {
+                 try {
+-                    event.sender.executeJavaScript(script, true);
++                    // Wrap in IIFE to avoid global scope pollution (fixes JSONPath conflict)
++                    const wrappedScript = `(function() { ${script} })();`;
++                    event.sender.executeJavaScript(wrappedScript, true);
+                 }
+                 catch (e) {
+                     console.error('@ghostery/adblocker scriptlet crashed', e);
