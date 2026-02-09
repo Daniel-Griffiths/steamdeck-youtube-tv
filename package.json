@@ -12,8 +12,8 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^39.2.7",
-    "electron-builder": "^26.0.12"
+    "electron": "^40.2.1",
+    "electron-builder": "^26.7.0"
   },
   "build": {
     "appId": "com.danielgriffiths.youtube",
@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "@ghostery/adblocker-electron": "^2.13.2",
-    "electron-updater": "^6.6.2"
+    "@ghostery/adblocker-electron": "^2.13.4",
+    "electron-updater": "^6.7.3"
   }
 }

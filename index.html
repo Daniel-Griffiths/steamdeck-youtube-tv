@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -23,7 +23,7 @@
       src="https://www.youtube.com/tv?env_forceFullAnimation=true"
       httpreferrer="https://www.youtube.com/tv"
       style="height: 100vh; width: 100vw; background: #000"
-      useragent="Mozilla/5.0 (Linux; Android 12) Cobalt/22.2.3-gold (PS4)"
+      useragent="Mozilla/5.0 (PS4; Leanback Shell) Cobalt/24.lts.13.1032728-gold v8/8.8.278.8-jit gles Starboard/14, SystemIntegratorName_PS4_ChipsetModelNumber_2024/FirmwareVersion (Sony, PS4, Wired)"
     ></webview>
     <script>
       const webview = document.getElementById("webview");
@@ -68,7 +68,11 @@
       const buttonStates = new Map();
 
       function sendKey(keyCode, type) {
-        webview.sendInputEvent({ type, keyCode });
+        try {
+          webview.sendInputEvent({ type, keyCode });
+        } catch (e) {
+          // Ignore errors when webview isn't ready
+        }
       }
 
       function startKeyRepeat(buttonKey, keyCode) {
